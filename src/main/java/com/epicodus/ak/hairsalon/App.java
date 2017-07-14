@@ -7,6 +7,11 @@ import java.util.Map;
 
 public class App {
     public static void main(String[] args){
+        ProcessBuilder process = new ProcessBuilder();
+        if (process.environment().get("PORT") != null) {
+            Spark.port(Integer.parseInt(process.environment().get("PORT")));
+        }
+
         Spark.get("/", (request, response) -> {
             Map<String, Object> model = new HashMap<String, Object>();
             model.put("template", "templates/index.vtl");

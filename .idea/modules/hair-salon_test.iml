@@ -15,8 +15,9 @@
     <orderEntry type="library" name="Gradle: org.apache.velocity:velocity:1.7" level="project" />
     <orderEntry type="library" name="Gradle: org.sql2o:sql2o:1.6.0-RC3" level="project" />
     <orderEntry type="library" name="Gradle: org.postgresql:postgresql:42.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-simple:1.7.25" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
-    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.13" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-webapp:9.4.4.v20170414" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty.websocket:websocket-server:9.4.4.v20170414" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-servlet:9.4.4.v20170414" level="project" />
