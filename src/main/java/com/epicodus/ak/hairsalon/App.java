@@ -1,4 +1,5 @@
 package com.epicodus.ak.hairsalon;
+
 import spark.ModelAndView;
 import spark.Spark;
 import spark.template.velocity.VelocityTemplateEngine;
@@ -17,7 +18,6 @@ public class App {
             model.put("template", "templates/index.vtl");
             return new ModelAndView(model, "templates/layout.vtl");
         }, new VelocityTemplateEngine());
-
     }
 
 }
