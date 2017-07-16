@@ -1,13 +1,7 @@
 package com.epicodus.ak.hairsalon;
 
-import com.epicodus.ak.hairsalon.db.Database;
-import com.epicodus.ak.hairsalon.db.PgDatabase;
-import com.epicodus.ak.hairsalon.model.Stylist;
-import spark.ModelAndView;
+import com.epicodus.ak.hairsalon.routes.*;
 import spark.Spark;
-import spark.template.velocity.VelocityTemplateEngine;
-import java.util.HashMap;
-import java.util.Map;
 
 public class App {
     public static void main(String[] args){
@@ -15,19 +9,18 @@ public class App {
             Spark.port(Integer.parseInt(System.getenv("PORT")));
         }
 
-        Spark.get("/", (request, response) -> {
+        String defaultLayout = "templates/layout.vtl";
 
-            Database db = new PgDatabase();
-            Stylist stylist = new Stylist();
-            stylist.setFirstName("Ivan");
-            stylist.setLastName("Ivanov");
-            db.updateStylist(stylist);
+        Register.get("/", new SimpleGetRoute(),"templates/index.vtl", defaultLayout );
 
+        Register.get("/stylists", new StylistsGetRoute(),"templates/stylists.vtl", defaultLayout);
+        Register.get("/stylists/new", new SimpleGetRoute(),"templates/stylist-new.vtl",defaultLayout);
+        Register.get("/stylists/:id/view", new StylistViewGetRoute(), "templates/stylist-view.vtl", defaultLayout);
+        Register.get("/stylists/:id", new StylistEditGetRoute(),"templates/stylist-edit.vtl",defaultLayout);
 
-            Map<String, Object> model = new HashMap<String, Object>();
-            model.put("template", "templates/index.vtl");
-            return new ModelAndView(model, "templates/layout.vtl");
-        }, new VelocityTemplateEngine());
+        Register.post("/stylists/new", new StylistNewPostRoute(),"/stylists");
+        Register.post("/stylists/:id", new StylistEditPostRoute(), "/stylists");
+        Register.post("/stylists/:id/delete", new StylistDeletePostRoute(), "/stylists");
     }
 
 }
