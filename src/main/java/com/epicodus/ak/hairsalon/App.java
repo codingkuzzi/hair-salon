@@ -21,8 +21,8 @@ public class App {
             // TODO: move local database setting to some config file
             database = new PgDatabase(
                 "jdbc:postgresql://localhost:5432/hair-salon",
-                "postgres",
-                "postgres");
+                null,
+                null);
         }
 
         Register register = new Register(database, "templates/layout.vtl");
