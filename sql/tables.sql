@@ -1,24 +1,24 @@
-create table stylists
+CREATE TABLE stylists
 (
-  id serial primary key,
-  lastName varchar(250) not null,
-  firstName varchar(250) not null
+  id serial PRIMARY KEY,
+  lastName varchar(250) NOT NULL,
+  firstName varchar(250) NOT NULL
 );
 
-create table clients
+CREATE TABLE clients
 (
-  id serial primary key,
-  lastName varchar(250) not null,
-  firstName varchar(250) not null,
-  gender char(1) not null,
-  dateOfBirth date not null,
-  stylistId integer references stylists(id)
+  id serial PRIMARY KEY,
+  lastName varchar(250) NOT NULL,
+  firstName varchar(250) NOT NULL,
+  gender char(1) NOT NULL,
+  dateOfBirth date NOT NULL,
+  stylistId integer REFERENCES stylists(id)
 );
 
-create table appointments
+CREATE TABLE appointments
 (
-  id serial primary key,
-  clientId integer not null references clients(id),
-  stylistId integer not null references stylists(id),
-  dateandtime timestamp not null
+  id serial PRIMARY KEY,
+  clientId integer NOT NULL REFERENCES clients(id),
+  stylistId integer NOT NULL REFERENCES stylists(id),
+  dateAndTime timestamp NOT NULL
 );

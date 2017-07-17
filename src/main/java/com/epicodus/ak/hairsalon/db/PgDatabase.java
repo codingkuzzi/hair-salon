@@ -1,35 +1,27 @@
 package com.epicodus.ak.hairsalon.db;
 
 import com.epicodus.ak.hairsalon.model.*;
-import org.apache.velocity.app.event.implement.EscapeXmlReference;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
+import org.sql2o.converters.Convert;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class PgDatabase implements Database {
 
     private Sql2o connectionWrapper;
 
-    public PgDatabase() {
-        if (System.getenv("JDBC_DATABASE_URL") != null) {
-            connectionWrapper = new Sql2o(
-                System.getenv("JDBC_DATABASE_URL"),
-                System.getenv("JDBC_DATABASE_USERNAME"),
-                System.getenv("JDBC_DATABASE_PASSWORD"));
-        } else {
-            connectionWrapper = new Sql2o(
-                "jdbc:postgresql://localhost:5432/hair-salon",
-                "postgres",
-                "postgres");
-        }
+    public PgDatabase(String url, String user, String password) {
+        connectionWrapper = new Sql2o(url, user, password);
+        Convert.registerConverter(LocalDate.class, new LocalDateConverter());
     }
 
     @Override
     public List<Stylist> getStylists() {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,lastname,firstname FROM stylists")
+                .createQuery("SELECT id,lastName,firstName FROM stylists")
                 .executeAndFetch(Stylist.class);
         }
     }
@@ -38,7 +30,7 @@ public class PgDatabase implements Database {
     public Stylist getStylistById(int id) {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,lastname,firstname FROM stylists WHERE id=:id")
+                .createQuery("SELECT id,lastName,firstName FROM stylists WHERE id=:id")
                 .addParameter("id", id)
                 .executeAndFetchFirst(Stylist.class);
         }
@@ -49,12 +41,12 @@ public class PgDatabase implements Database {
         try (Connection connection = connectionWrapper.open()) {
             if (stylist.getId() > 0) {
                 connection
-                    .createQuery("UPDATE stylists SET lastname=:lastName, firstname=:firstName WHERE id=:id")
+                    .createQuery("UPDATE stylists SET lastName=:lastName, firstName=:firstName WHERE id=:id")
                     .bind(stylist)
                     .executeUpdate();
             } else {
                 stylist.setId(connection
-                    .createQuery("INSERT INTO stylists(lastname,firstname) VALUES (:lastName,:firstName)", true)
+                    .createQuery("INSERT INTO stylists(lastName,firstName) VALUES (:lastName,:firstName)", true)
                     .bind(stylist)
                     .executeUpdate()
                     // make sure [id] is the first defined column in [stylists] table
@@ -64,11 +56,11 @@ public class PgDatabase implements Database {
     }
 
     @Override
-    public boolean canDeleteStylist(int id) {
+    public boolean anyAppointmentByStylist(int stylistId) {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT NOT EXISTS(SELECT id FROM appointments WHERE stylistid=:id)")
-                .addParameter("id", id)
+                .createQuery("SELECT EXISTS(SELECT id FROM appointments WHERE stylistId=:stylistId)")
+                .addParameter("stylistId", stylistId)
                 .executeScalar(boolean.class);
         }
     }
@@ -77,8 +69,8 @@ public class PgDatabase implements Database {
     public void deleteStylist(int id) {
         try (Connection connection = connectionWrapper.beginTransaction()) {
             connection
-                .createQuery("UPDATE clients SET stylistid=NULL WHERE stylistid=:id")
-                .addParameter("id", id)
+                .createQuery("UPDATE clients SET stylistId=NULL WHERE stylistId=:stylistId")
+                .addParameter("stylistId", id)
                 .executeUpdate();
 
             connection
@@ -94,7 +86,7 @@ public class PgDatabase implements Database {
     public List<Client> getClients() {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,lastname,firstname,gender,dateofbirth,stylistid FROM clients")
+                .createQuery("SELECT id,lastName,firstName,gender,dateOfBirth,stylistId FROM clients")
                 .executeAndFetch(Client.class);
         }
     }
@@ -103,8 +95,8 @@ public class PgDatabase implements Database {
     public List<Client> getClientsByStylist(int stylistId) {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,lastname,firstname,gender,dateofbirth,stylistid FROM clients WHERE stylistid=:stylistid")
-                .addParameter("stylistid", stylistId)
+                .createQuery("SELECT id,lastName,firstName,gender,dateOfBirth,stylistId FROM clients WHERE stylistId=:stylistId")
+                .addParameter("stylistId", stylistId)
                 .executeAndFetch(Client.class);
         }
     }
@@ -113,7 +105,7 @@ public class PgDatabase implements Database {
     public Client getClientById(int id) {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,lastname,firstname,gender,dateofbirth,stylistid FROM clients WHERE id=:id")
+                .createQuery("SELECT id,lastName,firstName,gender,dateOfBirth,stylistId FROM clients WHERE id=:id")
                 .addParameter("id", id)
                 .executeAndFetchFirst(Client.class);
         }
@@ -124,12 +116,12 @@ public class PgDatabase implements Database {
         try (Connection connection = connectionWrapper.open()) {
             if (client.getId() > 0) {
                 connection
-                    .createQuery("UPDATE clients SET lastname=:lastName,firstname=:firstName,gender=:gender,dateofbirth=:dateOfBirth,stylistid=:stylistId WHERE id=:id")
+                    .createQuery("UPDATE clients SET lastName=:lastName,firstName=:firstName,gender=:gender,dateOfBirth=:dateOfBirth,stylistId=:stylistId WHERE id=:id")
                     .bind(client)
                     .executeUpdate();
             } else {
                 client.setId(connection
-                    .createQuery("INSERT INTO clients(lastname,firstname,gender,dateofbirth,stylistid) VALUES (:lastName,:firstName,:gender,:dateOfBirth,:stylistId)", true)
+                    .createQuery("INSERT INTO clients(lastName,firstName,gender,dateOfBirth,stylistId) VALUES (:lastName,:firstName,:gender,:dateOfBirth,:stylistId)", true)
                     .bind(client)
                     .executeUpdate()
                     // make sure [id] is the first defined column in [clients] table
@@ -142,8 +134,8 @@ public class PgDatabase implements Database {
     public void deleteClient(int id) {
         try (Connection connection = connectionWrapper.beginTransaction()) {
             connection
-                .createQuery("DELETE FROM appointments WHERE clientid=:id")
-                .addParameter("id", id)
+                .createQuery("DELETE FROM appointments WHERE clientId=:clientId")
+                .addParameter("clientId", id)
                 .executeUpdate();
 
             connection
@@ -159,7 +151,7 @@ public class PgDatabase implements Database {
     public List<Appointment> getAppointments() {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,clientid,stylistid,dateandtime FROM appointments")
+                .createQuery("SELECT id,clientId,stylistId,dateAndTime FROM appointments")
                 .executeAndFetch(Appointment.class);
         }
     }
@@ -168,7 +160,7 @@ public class PgDatabase implements Database {
     public List<Appointment> getAppointmentsByClient(int clientId) {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,clientid,stylistid,dateandtime FROM appointments WHERE clientid=:clientId")
+                .createQuery("SELECT id,clientId,stylistId,dateAndTime FROM appointments WHERE clientId=:clientId")
                 .addParameter("clientId", clientId)
                 .executeAndFetch(Appointment.class);
         }
@@ -178,7 +170,7 @@ public class PgDatabase implements Database {
     public List<Appointment> getAppointmentsByStylist(int stylistId) {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,clientid,stylistid,dateandtime FROM appointments WHERE stylistid=:stylistId")
+                .createQuery("SELECT id,clientId,stylistId,dateAndTime FROM appointments WHERE stylistId=:stylistId")
                 .addParameter("stylistId", stylistId)
                 .executeAndFetch(Appointment.class);
         }
@@ -188,7 +180,7 @@ public class PgDatabase implements Database {
     public Appointment getAppointmentById(int id) {
         try (Connection connection = connectionWrapper.open()) {
             return connection
-                .createQuery("SELECT id,clientid,stylistid,dateandtime FROM appointments WHERE id=:id")
+                .createQuery("SELECT id,clientId,stylistId,dateAndTime FROM appointments WHERE id=:id")
                 .addParameter("id", id)
                 .executeAndFetchFirst(Appointment.class);
         }
@@ -199,12 +191,12 @@ public class PgDatabase implements Database {
         try (Connection connection = connectionWrapper.open()) {
             if (appointment.getId() > 0) {
                 connection
-                    .createQuery("UPDATE appointments SET clientid=:clientId,stylistid=:stylistId,dateandtime=:dateAndTime WHERE id=:id")
+                    .createQuery("UPDATE appointments SET clientId=:clientId,stylistId=:stylistId,dateAndTime=:dateAndTime WHERE id=:id")
                     .bind(appointment)
                     .executeUpdate();
             } else {
                 appointment.setId(connection
-                    .createQuery("INSERT INTO appointments(clientid,stylistid,dateandtime) VALUES (:clientId,:stylistId,:dateAndTime)", true)
+                    .createQuery("INSERT INTO appointments(clientId,stylistId,dateAndTime) VALUES (:clientId,:stylistId,:dateAndTime)", true)
                     .bind(appointment)
                     .executeUpdate()
                     // make sure [id] is the first defined column in [appointments] table

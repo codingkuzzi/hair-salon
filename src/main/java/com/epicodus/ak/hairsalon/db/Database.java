@@ -8,7 +8,7 @@ public interface Database {
     List<Stylist> getStylists();
     Stylist getStylistById(int id);
     void updateStylist(Stylist stylist);
-    boolean canDeleteStylist(int id);
+    boolean anyAppointmentByStylist(int stylistId);
     void deleteStylist(int id);
 
     List<Client> getClients();

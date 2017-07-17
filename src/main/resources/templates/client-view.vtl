@@ -1,0 +1,24 @@
+<h3>Client</h3>
+<h3>$client.getLastName(), $client.getFirstName()</h3>
+
+<p>Date of birth: $client.getDateOfBirth()</p>
+<p>Gender: #if ($client.getGender() == "m") male
+        #else female
+        #end</p>
+
+<h3>Stylist</h3>
+#if (!$client.getStylistId())<p>No stylist assigned</p>
+#else <a href="/stylists/$client.getStylistId()/view">$stylist.getLastName(), $stylist.getFirstName()</a>
+#end
+
+<h3>Appointments</h3>
+#if ($appointments.size() > 0)
+<ul>
+    #foreach($appointment in $appointments)
+        <li><a href="/appointments/$appointment.getId()">$appointment.getDateAndTime()</li>
+    #end
+</ul>
+#else
+<p>No appoinments</p>
+#end
+<a href="/clients">All clients</a>

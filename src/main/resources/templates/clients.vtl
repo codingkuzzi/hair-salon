@@ -1,0 +1,13 @@
+<h3>Clients</h3>
+
+#if ($clients.size() > 0)
+<ul>
+    #foreach ($client in $clients)
+        <li>$client.getLastName(), $client.getFirstName() <a href="/clients/$client.getId()/view">(view)</a><a href="/clients/$client.getId()">(edit)</a></li>
+    #end
+</ul>
+#else
+<p>No clients</p>
+#end
+
+<a href="/clients/new">Add new client</a>

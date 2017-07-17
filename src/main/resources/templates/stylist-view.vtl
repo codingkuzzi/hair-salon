@@ -2,17 +2,21 @@
 <h3>$stylist.getLastName(), $stylist.getFirstName()</h3>
 
 <h3>Clients</h3>
+#if ($clients.size() > 0)
 <ul>
     #foreach($client in $clients)
-        <li><a href="/clients/$client.getId()">$client.getLastName(), $client.getFirstName()</li>
+        <li><a href="/clients/$client.getId()/view">$client.getLastName(), $client.getFirstName()</a></li>
     #end
 </ul>
+#else <p>No clients</p>#end
 
 <h3>Appointments</h3>
+#if ($appointments.size() > 0)
 <ul>
     #foreach($appointment in $appointments)
         <li><a href="/appointments/$appointment.getId()">$appointment.getDateAndTime()</li>
     #end
 </ul>
+#else <p>No appointments</p>#end
 
 <a href="/stylists">All stylists</a>
