@@ -5,6 +5,8 @@ import com.epicodus.ak.hairsalon.db.PgDatabase;
 import com.epicodus.ak.hairsalon.routes.*;
 import spark.Spark;
 
+import static spark.Spark.staticFileLocation;
+
 public class App {
     public static void main(String[] args){
         // Use Heroku environment variables, if detected
@@ -21,9 +23,11 @@ public class App {
             // TODO: move local database setting to some config file
             database = new PgDatabase(
                 "jdbc:postgresql://localhost:5432/hair-salon",
-                null,
-                null);
+                "postgres",
+                "postgres");
         }
+
+        staticFileLocation("/public");
 
         Register register = new Register(database, "templates/layout.vtl");
 

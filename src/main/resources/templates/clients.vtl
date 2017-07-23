@@ -1,13 +1,35 @@
-<h3>Clients</h3>
+<div class="view">
+<h3>Clients:</h3>
 
+<div class = "row ">
 #if ($clients.size() > 0)
-<ul>
-    #foreach ($client in $clients)
-        <li>$client.getLastName(), $client.getFirstName() <a href="/clients/$client.getId()/view">(view)</a><a href="/clients/$client.getId()">(edit)</a></li>
-    #end
-</ul>
+    <div class="col-sm-8 left_col">
+
+        #foreach ($client in $clients)
+            <p>$client.getLastName(), $client.getFirstName()</p>
+        #end
+
+    </div>
+    <div class="col-sm-2">
+        <ul>
+        #foreach ($client in $clients)
+            <p><a href="/clients/$client.getId()/view">view</a></p>
+        #end
+        <ul>
+    </div>
+    <div class="col-sm-2">
+        <ul>
+        #foreach ($client in $clients)
+            <p><a href="/clients/$client.getId()">edit</a></p>
+        #end
+        <ul>
+    </div>
 #else
 <p>No clients</p>
 #end
+</div>
+<br>
 
 <a href="/clients/new">Add new client</a>
+</div>
+
